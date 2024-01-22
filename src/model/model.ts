@@ -4,4 +4,13 @@ type Model = {
   has_data: number;
 };
 
-export { Model };
+// TODO: set sensible defaults for missing fields
+const defaultModel = {
+    has_data: 0,
+}
+
+const createModel = (map: any) => {
+    return {...defaultModel, ...map};
+}
+
+export { Model, createModel};

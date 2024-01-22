@@ -9,7 +9,7 @@ const table_name = "table";
 const db = SQLite.openDatabase(`${database_name}.db`);
 
 const executeSql = (sql: string, params: (string | number)[] = []) =>
-  new Promise<any>((resolve, reject) => {
+  new Promise<SQLite.SQLResultSet>((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
         sql,
@@ -20,14 +20,23 @@ const executeSql = (sql: string, params: (string | number)[] = []) =>
     });
   });
 
+const doesTableExist = async (): Promise<boolean> => {
+  const result = await executeSql(
+    `SELECT name FROM sqlite_master WHERE type = 'table' AND name = '${table_name}';`,
+  );
+  return result.rows.length > 0;
+};
+
 let created = false;
 const create = async (): Promise<void> => {
   if (!created) {
     // await executeSql(`DROP TABLE ${table_name}`);
-    // TODO fill out the model details for the database
-    await executeSql(
-      `CREATE TABLE IF NOT EXISTS ${table_name}(id INT, has_data INT)`,
-    );
+    if (!doesTableExist()) {
+      // TODO fill out the model details for the database
+      await executeSql(
+        `CREATE TABLE IF NOT EXISTS ${table_name}(id INT, has_data INT)`,
+      );
+    }
     created = true;
   }
 };
@@ -72,4 +81,4 @@ const remove = async (id: number) => {
   await executeSql(`DELETE FROM ${table_name} WHERE id = ?`, [id]);
 };
 
-export { add, getAll, getById, remove, update };
+export { add, doesTableExist, getAll, getById, remove, update };
