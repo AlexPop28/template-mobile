@@ -1,21 +1,21 @@
 import { Model, createModel } from "../model/model";
 import useAxios from "./useAxios";
 
-type setLoadingT = (newLoading: boolean) => void;
+type setIsLoadingT = (newLoading: boolean) => void;
 
 const safeRequest = <T>(
-  setLoading: (newLoading: boolean) => void,
+  setIsLoading: (newLoading: boolean) => void,
   request: () => Promise<T>,
 ): Promise<T> => {
-  setLoading(true);
+  setIsLoading(true);
   return new Promise((resolve, reject) => {
     request()
       .then((result) => {
-        setLoading(false);
+        setIsLoading(false);
         resolve(result);
       })
       .catch((error) => {
-        setLoading(false);
+        setIsLoading(false);
         reject(error);
       });
   });
@@ -26,7 +26,7 @@ const removeOfflineKeys = (obj: Model) => {
   const { has_data: _, ...rest } = obj;
   return rest;
 };
-const getAll = async (setLoading: setLoadingT): Promise<Model[]> => {
+const getAll = async (setIsLoading: setIsLoadingT): Promise<Model[]> => {
   const axios = useAxios();
   console.log("SERVER: trying getAll");
 
@@ -41,10 +41,10 @@ const getAll = async (setLoading: setLoadingT): Promise<Model[]> => {
     }
   };
 
-  return safeRequest(setLoading, request);
+  return safeRequest(setIsLoading, request);
 };
 
-const getById = async (setLoading: setLoadingT, id: number): Promise<Model> => {
+const getById = async (setIsLoading: setIsLoadingT, id: number): Promise<Model> => {
   console.log("SERVER: trying getById");
   const axios = useAxios();
 
@@ -59,10 +59,10 @@ const getById = async (setLoading: setLoadingT, id: number): Promise<Model> => {
     }
   };
 
-  return safeRequest(setLoading, request);
+  return safeRequest(setIsLoading, request);
 };
 
-const add = async (setLoading: setLoadingT, obj_: Model): Promise<void> => {
+const add = async (setIsLoading: setIsLoadingT, obj_: Model): Promise<void> => {
   console.log("SERVER: trying add");
   const axios = useAxios();
 
@@ -77,10 +77,10 @@ const add = async (setLoading: setLoadingT, obj_: Model): Promise<void> => {
     }
   };
 
-  return safeRequest(setLoading, request);
+  return safeRequest(setIsLoading, request);
 };
 
-const update = async (setLoading: setLoadingT, obj_: Model): Promise<void> => {
+const update = async (setIsLoading: setIsLoadingT, obj_: Model): Promise<void> => {
   console.log("SERVER: trying update");
   const axios = useAxios();
 
@@ -96,10 +96,10 @@ const update = async (setLoading: setLoadingT, obj_: Model): Promise<void> => {
     }
   };
 
-  return safeRequest(setLoading, request);
+  return safeRequest(setIsLoading, request);
 };
 
-const remove = async (setLoading: setLoadingT, id: number): Promise<void> => {
+const remove = async (setIsLoading: setIsLoadingT, id: number): Promise<void> => {
   console.log("SERVER: trying remove");
   const axios = useAxios();
 
@@ -113,7 +113,7 @@ const remove = async (setLoading: setLoadingT, id: number): Promise<void> => {
     }
   };
 
-  return safeRequest(setLoading, request);
+  return safeRequest(setIsLoading, request);
 };
 
 export { add, getAll, getById, remove, update };
