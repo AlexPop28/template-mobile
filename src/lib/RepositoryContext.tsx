@@ -8,10 +8,10 @@ import React, {
 import * as db from "./database";
 import * as server from "./service";
 // TODO rename Model
-import { Model } from "../model/model";
 import Toast from "react-native-root-toast";
+import { Model } from "../model/model";
 
-interface ContextValues {
+interface Repository {
   objects: Model[];
   isLoading: boolean;
   isOffline: boolean;
@@ -22,7 +22,7 @@ interface ContextValues {
   getById: (id: number) => Promise<Model>;
 }
 
-const RepositoryContext = createContext<ContextValues | undefined>(undefined);
+const RepositoryContext = createContext<Repository | undefined>(undefined);
 
 const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
   children,
@@ -110,11 +110,11 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
     };
   }, []);
 
-  const contextValue: ContextValues = {
+  const repository: Repository = {
     objects,
     retryFetch: getAll,
     isOffline,
-      isLoading,
+    isLoading,
     // add,
     // update,
     // getById,
@@ -122,7 +122,7 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   return (
-    <RepositoryContext.Provider value={contextValue}>
+    <RepositoryContext.Provider value={repository}>
       {children}
     </RepositoryContext.Provider>
   );
@@ -136,4 +136,4 @@ const useRepository = () => {
   return context;
 };
 
-export { RepositoryProvider, useRepository };
+export { Repository, RepositoryProvider, useRepository };
