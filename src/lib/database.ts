@@ -4,7 +4,7 @@ import { Model } from "../model/model";
 
 // TODO update names
 const database_name = "database";
-const table_name = "table";
+const table_name = "table_name";
 
 const db = SQLite.openDatabase(`${database_name}.db`);
 
@@ -21,8 +21,10 @@ const executeSql = (sql: string, params: (string | number)[] = []) =>
   });
 
 const doesTableExist = async (): Promise<boolean> => {
+  console.log("DB: Checking if the table exists");
   const result = await executeSql(
-    `SELECT name FROM sqlite_master WHERE type = 'table' AND name = '${table_name}';`,
+    `SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?`,
+    [table_name],
   );
   return result.rows.length > 0;
 };
@@ -30,8 +32,9 @@ const doesTableExist = async (): Promise<boolean> => {
 let created = false;
 const create = async (): Promise<void> => {
   if (!created) {
+    const tableDoesExist = await doesTableExist();
     // await executeSql(`DROP TABLE ${table_name}`);
-    if (!doesTableExist()) {
+    if (!tableDoesExist) {
       // TODO fill out the model details for the database
       console.log("DB: creating the table");
       await executeSql(

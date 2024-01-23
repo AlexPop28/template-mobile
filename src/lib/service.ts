@@ -32,11 +32,11 @@ const getAll = async (setIsLoading: setIsLoadingT): Promise<Model[]> => {
 
   const request = async () => {
     try {
-      const { data } = await axios.get("/");
+      const { data } = await axios.get("/pets");
       console.log("SERVER: getAll successful");
       return data.map(createModel);
     } catch (e: any) {
-      console.log("SERVER ERROR: getAll failed:", e);
+      console.log("SERVER ERROR: getAll failed:", e.toString());
       throw e;
     }
   };
@@ -44,17 +44,20 @@ const getAll = async (setIsLoading: setIsLoadingT): Promise<Model[]> => {
   return safeRequest(setIsLoading, request);
 };
 
-const getById = async (setIsLoading: setIsLoadingT, id: number): Promise<Model> => {
+const getById = async (
+  setIsLoading: setIsLoadingT,
+  id: number,
+): Promise<Model> => {
   console.log("SERVER: trying getById");
   const axios = useAxios();
 
   const request = async () => {
     try {
-      const { data } = await axios.get(`/${id}/`);
+      const { data } = await axios.get(`/pet/${id}/`);
       console.log("SERVER: getById successful");
       return createModel(data);
     } catch (e: any) {
-      console.log("SERVER ERROR: getById failed:", e);
+      console.log("SERVER ERROR: getById failed:", e.toString());
       throw e;
     }
   };
@@ -69,10 +72,10 @@ const add = async (setIsLoading: setIsLoadingT, obj_: Model): Promise<void> => {
   const request = async () => {
     const obj = removeOfflineKeys(obj_);
     try {
-      await axios.post("/", JSON.stringify(obj));
+      await axios.post("/pets", JSON.stringify(obj));
       console.log("SERVER: add successful");
     } catch (e: any) {
-      console.log("SERVER ERROR: add failed:", e);
+      console.log("SERVER ERROR: add failed:", e.toString());
       throw e;
     }
   };
@@ -80,7 +83,10 @@ const add = async (setIsLoading: setIsLoadingT, obj_: Model): Promise<void> => {
   return safeRequest(setIsLoading, request);
 };
 
-const update = async (setIsLoading: setIsLoadingT, obj_: Model): Promise<void> => {
+const update = async (
+  setIsLoading: setIsLoadingT,
+  obj_: Model,
+): Promise<void> => {
   console.log("SERVER: trying update");
   const axios = useAxios();
 
@@ -88,10 +94,10 @@ const update = async (setIsLoading: setIsLoadingT, obj_: Model): Promise<void> =
     const obj = removeOfflineKeys(obj_);
     try {
       // TODO: check if not [patch] instead
-      await axios.put(`/${obj.id}/`, JSON.stringify(obj));
+      await axios.put(`/pet/${obj.id}/`, JSON.stringify(obj));
       console.log("SERVER: update successful");
     } catch (e: any) {
-      console.log("SERVER ERROR: update failed:", e);
+      console.log("SERVER ERROR: update failed:", e.toString());
       throw e;
     }
   };
@@ -99,16 +105,19 @@ const update = async (setIsLoading: setIsLoadingT, obj_: Model): Promise<void> =
   return safeRequest(setIsLoading, request);
 };
 
-const remove = async (setIsLoading: setIsLoadingT, id: number): Promise<void> => {
+const remove = async (
+  setIsLoading: setIsLoadingT,
+  id: number,
+): Promise<void> => {
   console.log("SERVER: trying remove");
   const axios = useAxios();
 
   const request = async () => {
     try {
-      await axios.delete(`/${id}/`);
+      await axios.delete(`/pet/${id}/`);
       console.log("SERVER: remove successful");
     } catch (e: any) {
-      console.log("SERVER ERROR: remove failed:", e);
+      console.log("SERVER ERROR: remove failed:", e.toString());
       throw e;
     }
   };

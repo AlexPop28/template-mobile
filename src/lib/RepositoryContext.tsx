@@ -131,7 +131,7 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
 const useRepository = () => {
   const context = useContext(RepositoryContext);
   if (!context) {
-    throw new Error("useRepository be used within a RepositoryProvider");
+    throw new Error("useRepository should be used within a RepositoryProvider");
   }
   return context;
 };
