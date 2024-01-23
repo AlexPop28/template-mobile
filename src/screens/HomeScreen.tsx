@@ -35,7 +35,13 @@ const HomeScreen = ({ navigation }: any) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Button title="Add" onPress={() => navigation.navigate("Add")} />
+        <>
+          <Button title="Add" onPress={() => navigation.navigate("Add")} />
+          <Button
+            title="Search"
+            onPress={() => navigation.navigate("Search")}
+          />
+        </>
       ),
     });
   }, [navigation]);
@@ -49,13 +55,14 @@ const HomeScreen = ({ navigation }: any) => {
             <Text style={{ color: "green" }}>Online</Text>
           )}
           {repository.isOffline && (
-              <Text style={{ color: "red" }}>
-                It looks like you are offline
-              </Text>
-            ) && <Button onPress={repository.retryFetch} title="Retry" />}
+            <>
+              <Text>It looks like you are offline. Do you want to retry?</Text>
+              <Button onPress={repository.retryFetch} title="Retry" />
+            </>
+          )}
           <FlatList
             data={repository.objects}
-            keyExtractor={(item, _index) => item.id.toString()}
+            keyExtractor={(item) => item.id.toString()}
             renderItem={renderItem}
           />
         </>

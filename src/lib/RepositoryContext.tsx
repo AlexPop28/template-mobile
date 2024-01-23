@@ -34,7 +34,16 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
 
   // TODO: handle server error (is is already logged)
   const handleServerError = (e: any) => {
-    Toast.show(`Server error: ${e}`);
+    if (e.code === "ERR_NETWORK") {
+      setIsOffline(true);
+      Toast.show("There was a network error.", {
+        duration: Toast.durations.LONG,
+      });
+    } else {
+      Toast.show(`Server error: ${e.toString()}`, {
+        duration: Toast.durations.LONG,
+      });
+    }
   };
   const handleDbError = (_e: any) => {};
 

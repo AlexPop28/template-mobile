@@ -6,11 +6,16 @@ type Model = {
 
 // TODO: set sensible defaults for missing fields
 const defaultModel = {
-    has_data: 0,
-}
+  has_data: 0,
+};
 
 const createModel = (map: any) => {
-    return {...defaultModel, ...map};
-}
+  return { ...defaultModel, ...map };
+};
 
-export { Model, createModel};
+// TODO create the string representation
+const modelToString = (model: Model) => {
+  return `Id: ${model.id}`;
+};
+
+export { Model, createModel, modelToString };

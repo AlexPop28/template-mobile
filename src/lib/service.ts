@@ -36,7 +36,12 @@ const getAll = async (setIsLoading: setIsLoadingT): Promise<Model[]> => {
       console.log("SERVER: getAll successful");
       return data.map(createModel);
     } catch (e: any) {
-      console.log("SERVER ERROR: getAll failed:", e.toString());
+      console.log(
+        "SERVER ERROR: getAll failed:",
+        e.message,
+        e.response,
+        e.request,
+      );
       throw e;
     }
   };
