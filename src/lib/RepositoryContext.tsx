@@ -32,7 +32,7 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
   const [objects, setObjects] = useState<Model[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [socket, _setSocket] = useState<WebSocket | null>();
-  const [isOffline, setIsOffline] = useState(true);
+  const [isOffline, setIsOffline] = useState(false);
 
   // TODO: handle server error (it is already logged)
   const handleServerError = (e: any) => {
@@ -56,7 +56,10 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
       const doesLocalTableExist = await db.doesTableExist();
       if (doesLocalTableExist) {
         const localObjects = await db.getAll();
-        console.log("The local db was used before. Using the local objects.");
+        console.log(
+          "The local db was used before. Using the local objects.",
+          localObjects,
+        );
         setObjects(localObjects);
       } else {
         try {
@@ -106,6 +109,22 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
       handleDbError(e);
       throw e;
     }
+  };
+
+  const remove = async (id: number): Promise<void> => {
+    try {
+      await server.remove(setIsLoading, id);
+    } catch (e: any) {
+      handleServerError(e);
+      throw e;
+    }
+    try {
+      await db.remove(id);
+    } catch (e: any) {
+      handleDbError(e);
+      throw e;
+    }
+    setObjects((objects) => objects.filter((obj) => obj.id !== id));
   };
 
   // const handleWebSocketMessage = (obj: Model) => {
@@ -166,7 +185,7 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
     // add,
     // update,
     getById,
-    // remove,
+    remove,
   };
 
   return (

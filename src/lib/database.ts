@@ -87,7 +87,7 @@ const add = async (obj: Model): Promise<void> => {
     // TODO add all fields; double check the order of the arguments
     await executeSql(`INSERT INTO ${table_name} (id, has_data) VALUES (?, ?)`, [
       obj.id,
-      1,
+      obj.has_data,
     ]);
     console.log("DB: add successful");
   } catch (e: any) {

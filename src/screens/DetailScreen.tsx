@@ -1,9 +1,9 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Alert, Button, Text, View } from "react-native";
-import { sharedStyles } from "./styles";
-import { Model, modelToString } from "../model/model";
-import { useRepository } from "../lib/RepositoryContext";
+import { Alert, Button, Text } from "react-native";
 import Container from "../components/Container";
+import { useRepository } from "../lib/RepositoryContext";
+import { Model, modelToString } from "../model/model";
+import { sharedStyles } from "./styles";
 
 const DetailScreen = ({ route, navigation }: any) => {
   const { id } = route.params;
@@ -27,6 +27,17 @@ const DetailScreen = ({ route, navigation }: any) => {
                 Alert.alert(
                   "Are you sure you want to delete this object?",
                   "This operation cannot be undone.",
+                  [
+                    {
+                      text: "Delete",
+                      onPress: () => {
+                        repository.remove(id).finally(() => {
+                          navigation.navigate("Home");
+                        });
+                      },
+                    },
+                    { text: "Cancel", onPress: () => {} },
+                  ],
                 );
               }}
             />
