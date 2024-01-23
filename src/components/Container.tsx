@@ -7,9 +7,7 @@ interface ConditionalWrapperProps {
   children: ReactNode;
 }
 
-const Container: React.FC<ConditionalWrapperProps> = ({
-  children,
-}) => {
+const Container: React.FC<ConditionalWrapperProps> = ({ children }) => {
   const repository = useRepository();
   return (
     <View style={sharedStyles.container}>
@@ -19,4 +17,4 @@ const Container: React.FC<ConditionalWrapperProps> = ({
   );
 };
 
-export default Container;
+export { Container };

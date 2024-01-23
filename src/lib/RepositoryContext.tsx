@@ -1,9 +1,9 @@
 import React, {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
+    ReactNode,
+    createContext,
+    useContext,
+    useEffect,
+    useState,
 } from "react";
 import * as db from "./database";
 import * as server from "./service";
@@ -127,6 +127,14 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
     setObjects((objects) => objects.filter((obj) => obj.id !== id));
   };
 
+  const add = async (obj: Model): Promise<void> => {
+    try {
+      await server.add(setIsLoading, obj);
+    } catch (e: any) {
+      handleServerError(e);
+    }
+  };
+
   // const handleWebSocketMessage = (obj: Model) => {
   //   // TODO: make sure that the object here has the [Model] type
   //   db.add(obj)
@@ -182,7 +190,7 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
     isLoading,
     isEditAvailable: false,
     isDeleteAvailable: !isOffline,
-    // add,
+    add,
     // update,
     getById,
     remove,
