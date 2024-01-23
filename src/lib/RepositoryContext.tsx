@@ -32,7 +32,7 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
   const [socket, _setSocket] = useState<WebSocket | null>();
   const [isOffline, setIsOffline] = useState(true);
 
-  // TODO: handle server error (is is already logged)
+  // TODO: handle server error (it is already logged)
   const handleServerError = (e: any) => {
     if (e.code === "ERR_NETWORK") {
       setIsOffline(true);

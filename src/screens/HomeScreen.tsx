@@ -1,5 +1,6 @@
 import React, { useLayoutEffect } from "react";
 import { Button, FlatList, Text, TouchableOpacity, View } from "react-native";
+import Container from "../components/Container";
 import { useRepository } from "../lib/RepositoryContext";
 import { Model } from "../model/model";
 import { sharedStyles } from "./styles";
@@ -47,27 +48,20 @@ const HomeScreen = ({ navigation }: any) => {
   }, [navigation]);
 
   return (
-    <View style={sharedStyles.container}>
-      {repository.isLoading && <Text>Loading...</Text>}
-      {!repository.isLoading && (
+    <Container>
+      {!repository.isOffline && <Text style={{ color: "green" }}>Online</Text>}
+      {repository.isOffline && (
         <>
-          {!repository.isOffline && (
-            <Text style={{ color: "green" }}>Online</Text>
-          )}
-          {repository.isOffline && (
-            <>
-              <Text>It looks like you are offline. Do you want to retry?</Text>
-              <Button onPress={repository.retryFetch} title="Retry" />
-            </>
-          )}
-          <FlatList
-            data={repository.objects}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItem}
-          />
+          <Text>It looks like you are offline. Do you want to retry?</Text>
+          <Button onPress={repository.retryFetch} title="Retry" />
         </>
       )}
-    </View>
+      <FlatList
+        data={repository.objects}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderItem}
+      />
+    </Container>
   );
 };
 
