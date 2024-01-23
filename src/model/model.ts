@@ -15,7 +15,8 @@ const createModel = (map: any) => {
 
 // TODO create the string representation
 const modelToString = (model: Model) => {
-  return `Id: ${model.id}`;
+  return `Id: ${model.id}
+Has data: ${model.has_data}`;
 };
 
 export { Model, createModel, modelToString };

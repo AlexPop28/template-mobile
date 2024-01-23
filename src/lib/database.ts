@@ -101,8 +101,8 @@ const update = async (obj: Model): Promise<void> => {
   try {
     await create();
     // TODO update the fields; double check the order or the arguments
-    await executeSql(`UPDATE ${table_name} SET field = ? WHERE id = ?`, [
-      "field",
+    await executeSql(`UPDATE ${table_name} SET has_data = ? WHERE id = ?`, [
+      obj.has_data,
       obj.id,
     ]);
     console.log("DB: update successful");

@@ -37,7 +37,10 @@ const DetailScreen = ({ route, navigation }: any) => {
   }, [navigation, id]);
 
   useEffect(() => {
-    repository.getById(id).then((model) => setModel(model));
+    repository
+      .getById(id)
+      .then((model) => setModel(model))
+      .catch((_e) => {});
   }, [id]);
 
   return (

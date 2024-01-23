@@ -47,7 +47,9 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
       });
     }
   };
-  const handleDbError = (_e: any) => {};
+  const handleDbError = (e: any) => {
+    console.log("DB ERROR:", e);
+  };
 
   const getAll = async (): Promise<void> => {
     try {
@@ -70,6 +72,39 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
       }
     } catch (e: any) {
       handleDbError(e);
+    }
+  };
+
+  const getById = async (id: number): Promise<Model> => {
+    try {
+      const obj = objects.find((obj) => obj.id === id);
+      if (obj === undefined) {
+        throw new Error(
+          `PERSISTENCE: tried to get detail of item with id = ${id} which does not exist.`,
+        );
+      }
+
+      if (obj.has_data) {
+        return obj;
+      }
+
+      let serverObj: Model;
+      try {
+        serverObj = await server.getById(setIsLoading, id);
+      } catch (e: any) {
+        handleServerError(e);
+        throw e;
+      }
+
+      serverObj.has_data = 1;
+      await db.update(serverObj);
+      setObjects((objects) =>
+        objects.map((obj) => (obj.id === id ? serverObj : obj)),
+      );
+      return serverObj;
+    } catch (e: any) {
+      handleDbError(e);
+      throw e;
     }
   };
 
@@ -130,7 +165,7 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
     isDeleteAvailable: !isOffline,
     // add,
     // update,
-    // getById,
+    getById,
     // remove,
   };
 
