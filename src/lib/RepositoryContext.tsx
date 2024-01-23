@@ -20,6 +20,8 @@ interface Repository {
   update: (updatedObj: Model) => Promise<void>;
   remove: (id: number) => Promise<void>;
   getById: (id: number) => Promise<Model>;
+  isEditAvailable: boolean;
+  isDeleteAvailable: boolean;
 }
 
 const RepositoryContext = createContext<Repository | undefined>(undefined);
@@ -124,6 +126,8 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
     retryFetch: getAll,
     isOffline,
     isLoading,
+    isEditAvailable: false,
+    isDeleteAvailable: !isOffline,
     // add,
     // update,
     // getById,

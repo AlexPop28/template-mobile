@@ -5,21 +5,6 @@ import { useRepository } from "../lib/RepositoryContext";
 import { Model } from "../model/model";
 import { sharedStyles } from "./styles";
 
-// const renderDeleteButton = (id: number, repository: Repository) => {
-//   return (
-//     <TouchableOpacity
-//       onPress={() => repository.remove(id)}
-//       style={{
-//         backgroundColor: "red",
-//         justifyContent: "center",
-//         paddingLeft: 20,
-//       }}
-//     >
-//       <Text style={{ color: "white", fontWeight: "bold" }}>Delete</Text>
-//     </TouchableOpacity>
-//   );
-// };
-
 const HomeScreen = ({ navigation }: any) => {
   const repository = useRepository();
 
