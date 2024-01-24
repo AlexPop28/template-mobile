@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Alert, Button, Text } from "react-native";
-import Container from "../components/Container";
+import { Container } from "../components/Container";
 import { useRepository } from "../lib/RepositoryContext";
 import { Model, modelToString } from "../model/model";
 import { sharedStyles } from "./styles";
@@ -55,7 +55,7 @@ const DetailScreen = ({ route, navigation }: any) => {
   }, [id]);
 
   return (
-    <Container>
+      <Container isAvailable={true}>
       {model?.has_data && (
         <Text style={sharedStyles.text}>{modelToString(model)}</Text>
       )}

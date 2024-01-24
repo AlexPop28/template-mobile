@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from "react";
-import { Button, FlatList, Text, TouchableOpacity, View } from "react-native";
-import Container from "../components/Container";
+import { Button, FlatList, Text, TouchableOpacity } from "react-native";
+import { Container } from "../components/Container";
 import { useRepository } from "../lib/RepositoryContext";
 import { Model } from "../model/model";
 import { sharedStyles } from "./styles";
@@ -33,7 +33,7 @@ const HomeScreen = ({ navigation }: any) => {
   }, [navigation]);
 
   return (
-    <Container>
+    <Container isAvailable={true}>
       {!repository.isOffline && <Text style={{ color: "green" }}>Online</Text>}
       {repository.isOffline && (
         <>

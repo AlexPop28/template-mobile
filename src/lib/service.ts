@@ -130,4 +130,27 @@ const remove = async (
   return safeRequest(setIsLoading, request);
 };
 
-export { add, getAll, getById, remove, update };
+const search = async (setIsLoading: setIsLoadingT): Promise<Model[]> => {
+  console.log("SERVER: trying search");
+  const axios = useAxios();
+
+  const request = async () => {
+    try {
+      const { data } = await axios.get("/search");
+      console.log("SERVER: search successful");
+      return data.map(createModel);
+    } catch (e: any) {
+      console.log(
+        "SERVER ERROR: search failed:",
+        e.message,
+        e.response,
+        e.request,
+      );
+      throw e;
+    }
+  };
+
+  return safeRequest(setIsLoading, request);
+};
+
+export { add, getAll, getById, remove, search, update };

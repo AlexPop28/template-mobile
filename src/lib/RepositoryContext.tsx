@@ -1,9 +1,9 @@
 import React, {
-    ReactNode,
-    createContext,
-    useContext,
-    useEffect,
-    useState,
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
 } from "react";
 import * as db from "./database";
 import * as server from "./service";
@@ -17,11 +17,14 @@ interface Repository {
   isOffline: boolean;
   retryFetch: () => Promise<void>;
   add: (obj: Model) => Promise<void>;
-  update: (updatedObj: Model) => Promise<void>;
+  // update: (updatedObj: Model) => Promise<void>;
   remove: (id: number) => Promise<void>;
   getById: (id: number) => Promise<Model>;
+  search: () => Promise<Model[]>;
+  isAddAvailable: boolean;
   isEditAvailable: boolean;
   isDeleteAvailable: boolean;
+  isSearchAvailable: boolean;
 }
 
 const RepositoryContext = createContext<Repository | undefined>(undefined);
@@ -135,6 +138,16 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
+  const search = async (): Promise<Model[]> => {
+    try {
+      const data = await server.search(setIsLoading);
+      return data;
+    } catch (e: any) {
+      handleServerError(e);
+      throw e;
+    }
+  };
+
   // const handleWebSocketMessage = (obj: Model) => {
   //   // TODO: make sure that the object here has the [Model] type
   //   db.add(obj)
@@ -194,6 +207,9 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
     // update,
     getById,
     remove,
+    search,
+    isSearchAvailable: !isOffline,
+    isAddAvailable: !isOffline,
   };
 
   return (

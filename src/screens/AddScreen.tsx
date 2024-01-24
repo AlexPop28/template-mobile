@@ -19,7 +19,7 @@ const AddScreen = ({ navigation }: any) => {
   };
 
   return (
-    <Container>
+      <Container isAvailable={repository.isAddAvailable}>
       <TextInput placeholder="Name" onChangeText={(text) => setName(text)} />
       <Button title="Save" onPress={handleSave} />
     </Container>
