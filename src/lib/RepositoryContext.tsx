@@ -9,7 +9,7 @@ import * as db from "./database";
 import * as server from "./service";
 // TODO rename Model
 import Toast from "react-native-root-toast";
-import { Model } from "../model/model";
+import { Model, modelToString } from "../model/model";
 
 interface Repository {
   objects: Model[];
@@ -21,6 +21,7 @@ interface Repository {
   remove: (id: number) => Promise<void>;
   getById: (id: number) => Promise<Model>;
   search: () => Promise<Model[]>;
+  isRetryButtonVisible: boolean;
   isAddAvailable: boolean;
   isEditAvailable: boolean;
   isDeleteAvailable: boolean;
@@ -34,13 +35,13 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [objects, setObjects] = useState<Model[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [socket, _setSocket] = useState<WebSocket | null>();
-  const [isOffline, setIsOffline] = useState(false);
+  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [isOffline, setIsOffline] = useState(true);
+  const [isRetryButtonVisible, setIsRetryButtonVisible] = useState(false);
 
   // TODO: handle server error (it is already logged)
   const handleServerError = (e: any) => {
     if (e.code === "ERR_NETWORK") {
-      setIsOffline(true);
       Toast.show("There was a network error.", {
         duration: Toast.durations.LONG,
       });
@@ -67,12 +68,13 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
       } else {
         try {
           const serverObjects = await server.getAll(setIsLoading);
-          setIsOffline(false);
+          setIsRetryButtonVisible(false);
           setObjects(serverObjects);
           serverObjects.forEach((obj: Model) => {
             db.add(obj).catch(handleDbError);
           });
         } catch (e: any) {
+          setIsRetryButtonVisible(true);
           handleServerError(e);
         }
       }
@@ -141,57 +143,70 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
   const search = async (): Promise<Model[]> => {
     try {
       const data = await server.search(setIsLoading);
-      return data;
+      return data.map((obj) => {
+        return { ...obj, has_data: 1 };
+      });
     } catch (e: any) {
       handleServerError(e);
       throw e;
     }
   };
 
-  // const handleWebSocketMessage = (obj: Model) => {
-  //   // TODO: make sure that the object here has the [Model] type
-  //   db.add(obj)
-  //     .then(() => {
-  //       setObjects((objects) => [...objects, obj]);
-  //     })
-  //     .catch(handleError);
-  // };
+  const handleWebSocketMessage = (obj: Model) => {
+    console.log("WebSocket: Received:", obj);
+    obj.has_data = 1;
+    // TODO: make sure that the object here has the [Model] type
+    Toast.show(`New object added on the server: ${modelToString(obj)}`, {
+      duration: Toast.durations.LONG,
+    });
+    db.add(obj)
+      .then(() => {
+        setObjects((objects) => [...objects, obj]);
+      })
+      .catch(handleDbError);
+  };
 
-  // const tryWebSocketSetup = () => {
-  //   console.log("Trying socket setup...");
-  //   if (socket !== null) return;
-  //   // TODO: change id and route of ws
-  //   const ip = "192.168.0.184:8000";
-  //   const ws_route = "";
-  //   const ws = new WebSocket(`ws://${ip}/${ws_route}/`);
+  const tryWebSocketSetup = () => {
+    console.log("Trying socket setup...");
+    if (socket !== null) return;
+    // TODO: change ip, port and route of ws
+    const ip = "192.168.0.186";
+    const port = "2309";
+    const ws_route = "";
+    const ws = new WebSocket(`ws://${ip}:${port}/${ws_route}/`);
 
-  //   ws.onopen = () => {
-  //     console.log("Socket connected!");
-  //     setSocket(ws);
-  //   };
+    ws.onopen = () => {
+      console.log("Socket connected!");
+      setSocket(ws);
+    };
 
-  //   ws.onmessage = (e: any) => {
-  //     const message = JSON.parse(e.data);
-  //     handleWebSocketMessage(message);
-  //   };
+    ws.onmessage = (e: any) => {
+      const message = JSON.parse(e.data);
+      handleWebSocketMessage(message);
+    };
 
-  //   ws.onerror = (e) => {
-  //     console.error("WebSocket encountered an error:", e);
-  //     ws.close();
-  //   };
+    ws.onerror = (e) => {
+      console.log("WebSocket encountered an error:", e);
+      ws.close();
+    };
 
-  //   ws.onclose = (e) => {
-  //     console.log("Socket connection closed", e.code, e.reason);
-  //     setSocket(null);
-  //     setTimeout(tryWebSocketSetup, 3000);
-  //   };
-  // };
+    ws.onclose = (e) => {
+      console.log("Socket connection closed", e.code, e.reason);
+      setSocket(null);
+      setTimeout(tryWebSocketSetup, 3000);
+    };
+  };
+
+  useEffect(() => {
+    setIsOffline(socket === null);
+  }, [socket]);
 
   useEffect(() => {
     getAll();
+    tryWebSocketSetup();
     return () => {
       if (socket) {
-        // state.socket.close();
+        socket.close();
       }
     };
   }, []);
@@ -208,6 +223,7 @@ const RepositoryProvider: React.FC<{ children: ReactNode }> = ({
     getById,
     remove,
     search,
+    isRetryButtonVisible,
     isSearchAvailable: !isOffline,
     isAddAvailable: !isOffline,
   };

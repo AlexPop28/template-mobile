@@ -34,8 +34,13 @@ const HomeScreen = ({ navigation }: any) => {
 
   return (
     <Container isAvailable={true}>
-      {!repository.isOffline && <Text style={{ color: "green" }}>Online</Text>}
+      {!repository.isOffline && (
+        <Text style={{ color: "green" }}>Socket Online</Text>
+      )}
       {repository.isOffline && (
+        <Text style={{ color: "red" }}>Socket Offline</Text>
+      )}
+      {repository.isRetryButtonVisible && (
         <>
           <Text>It looks like you are offline. Do you want to retry?</Text>
           <Button onPress={repository.retryFetch} title="Retry" />
