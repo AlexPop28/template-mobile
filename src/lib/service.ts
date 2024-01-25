@@ -135,7 +135,6 @@ const update = async (
   setIsLoading: setIsLoadingT,
   obj_: Model,
 ): Promise<void> => {
-  console.log("SERVER: trying update");
   const axios = useAxios();
 
   const request = async () => {
