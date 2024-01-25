@@ -5,6 +5,7 @@ import { Model } from "../model/model";
 // TODO update names
 const database_name = "database";
 const table_name = "table_name";
+// const categories_table_name = "categories_table";
 
 const db = SQLite.openDatabase(`${database_name}.db`);
 
@@ -28,6 +29,14 @@ const doesTableExist = async (): Promise<boolean> => {
   );
   return result.rows.length > 0;
 };
+// const doesCategoriesTableExist = async (): Promise<boolean> => {
+//   console.log("DB: Checking if the categories table exists");
+//   const result = await executeSql(
+//     `SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?`,
+//     [categories_table_name],
+//   );
+//   return result.rows.length > 0;
+// };
 
 let created = false;
 const create = async (): Promise<void> => {
@@ -46,23 +55,70 @@ const create = async (): Promise<void> => {
     created = true;
   }
 };
+// const create = async (): Promise<void> => {
+//   if (!created) {
+//     const categoriesTableDoesExist = await doesCategoriesTableExist();
+//     const tableDoesExist = await doesTableExist();
+//     // await executeSql(`DROP TABLE ${categories_table_name}`);
+//     // await executeSql(`DROP TABLE ${table_name}`);
+//     if (!categoriesTableDoesExist) {
+//       // TODO fill out the model details for the database
+//       console.log("DB: creating the categories table");
+//       await executeSql(
+//         `CREATE TABLE IF NOT EXISTS ${categories_table_name}(category TEXT, has_data INT)`,
+//       );
+//     } else {
+//       console.log("DB: categories table already exists");
+//     }
+
+//     if (!tableDoesExist) {
+//       console.log("DB: creating the table");
+//       await executeSql(
+//         `CREATE TABLE IF NOT EXISTS ${table_name}(id INT, name TEXT, description TEXT, image TEXT, category TEXT, units INT, price REAL, has_data INT)`,
+//       );
+//     } else {
+//       console.log("DB: table already exists");
+//     }
+
+//     created = true;
+//   }
+// };
 
 const getAll = async (): Promise<Model[]> => {
-  console.log("DB: trying getAll");
+  const funcName = `getAll`;
+  console.log(`DB: trying ${funcName}`);
   try {
     await create();
 
     const result = await executeSql(`SELECT * FROM ${table_name}`);
-    console.log("DB: getAll successful");
+    console.log(`DB: successful ${funcName}`);
     return result.rows._array.map((obj: Model) => {
       // TODO convert from database representation to in-memory representation
       return obj;
     });
   } catch (e: any) {
-    console.log("DB: getAll failed:", e);
+    console.log(`DB: failed ${funcName}`, e);
     throw e;
   }
 };
+
+// const getAllCategories = async (): Promise<Category[]> => {
+//   const funcName = `getAllCategories`;
+//   console.log(`DB: trying ${funcName}`);
+//   try {
+//     await create();
+
+//     const result = await executeSql(`SELECT * FROM ${categories_table_name}`);
+//     console.log(`DB: successful ${funcName}`);
+//     return result.rows._array.map((obj: Category) => {
+//       // TODO convert from database representation to in-memory representation
+//       return obj;
+//     });
+//   } catch (e: any) {
+//     console.log(`DB: failed ${funcName}`, e);
+//     throw e;
+//   }
+// };
 
 const getById = async (id: number): Promise<Model> => {
   console.log("DB: trying getById");
@@ -81,7 +137,8 @@ const getById = async (id: number): Promise<Model> => {
 };
 
 const add = async (obj: Model): Promise<void> => {
-  console.log("DB: trying add");
+  const funcName = `add(${obj})`;
+  console.log(`DB: trying ${funcName}`);
   try {
     await create();
     // TODO add all fields; double check the order of the arguments
@@ -89,15 +146,33 @@ const add = async (obj: Model): Promise<void> => {
       obj.id,
       obj.has_data,
     ]);
-    console.log("DB: add successful");
+    console.log(`DB: successful ${funcName}`);
   } catch (e: any) {
-    console.log("DB: add failed:", e);
+    console.log(`DB: failed ${funcName}`, e);
     throw e;
   }
 };
 
+// const addCategory = async (obj: Category): Promise<void> => {
+//   const funcName = `addCategory(${obj})`;
+//   console.log(`DB: trying ${funcName}`);
+//   try {
+//     await create();
+//     // TODO add all fields; double check the order of the arguments
+//     await executeSql(
+//       `INSERT INTO ${categories_table_name} (category, has_data) VALUES (?, ?)`,
+//       [obj.category, obj.has_data],
+//     );
+//     console.log(`DB: successful ${funcName}`);
+//   } catch (e: any) {
+//     console.log(`DB: failed ${funcName}`, e);
+//     throw e;
+//   }
+// };
+
 const update = async (obj: Model): Promise<void> => {
-  console.log("DB: trying update");
+  const funcName = `update(${obj})`;
+  console.log(`DB: trying ${funcName}`);
   try {
     await create();
     // TODO update the fields; double check the order or the arguments
@@ -105,21 +180,39 @@ const update = async (obj: Model): Promise<void> => {
       obj.has_data,
       obj.id,
     ]);
-    console.log("DB: update successful");
+    console.log(`DB: successful ${funcName}`);
   } catch (e: any) {
-    console.log("DB: update failed:", e);
+    console.log(`DB: failed ${funcName}`, e);
     throw e;
   }
 };
 
+// const updateCategory = async (category: Category): Promise<void> => {
+//   const funcName = `updateCategory(${category})`;
+//   console.log(`DB: trying ${funcName}`);
+//   try {
+//     await create();
+//     // TODO update the fields; double check the order or the arguments
+//     await executeSql(
+//       `UPDATE ${categories_table_name} SET has_data = ? WHERE category = ?`,
+//       [category.has_data, category.category],
+//     );
+//     console.log(`DB: successful ${funcName}`);
+//   } catch (e: any) {
+//     console.log(`DB: failed ${funcName}`, e);
+//     throw e;
+//   }
+// };
+
 const remove = async (id: number) => {
-  console.log("DB: trying remove");
+  const funcName = `remove(${id})`;
+  console.log(`DB: trying ${funcName}`);
   try {
     await create();
     await executeSql(`DELETE FROM ${table_name} WHERE id = ?`, [id]);
-    console.log("DB: remove successful");
+    console.log(`DB: successful ${funcName}`);
   } catch (e: any) {
-    console.log("DB: remove failed:", e);
+    console.log(`DB: failed ${funcName}`, e);
     throw e;
   }
 };
