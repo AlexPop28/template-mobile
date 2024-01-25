@@ -217,4 +217,31 @@ const remove = async (id: number) => {
   }
 };
 
+// const getNewTempId = async (): Promise<number> => {
+//   await create();
+//   const result = await executeSql(`SELECT MIN(id) AS minId FROM ${table_name}`);
+//   const minId = result.rows.item(0).minId || 0;
+//   console.log("Minimum ID:", minId);
+//   return Math.min(minId, 0) - 1;
+// };
+
+// const updateIdAndSetStateOk = async (data: {
+//   old_id: number;
+//   new_id: number;
+// }): Promise<void> => {
+//   await create();
+//   await executeSql(`UPDATE ${table_name} SET id = ?, state = ? WHERE id = ?`, [
+//     data.new_id,
+//     "ok",
+//     data.old_id,
+//   ]).catch(console.log);
+//   const result = await executeSql(`SELECT * FROM ${table_name} WHERE id = ?`, [
+//     data.new_id,
+//   ]);
+//   const result2 = await executeSql(`SELECT * FROM ${table_name} WHERE id = ?`, [
+//     data.old_id,
+//   ]);
+//   return result.rows.item(0), result2.rows.item(0);
+// };
+
 export { add, doesTableExist, getAll, getById, remove, update };
